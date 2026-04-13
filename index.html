@@ -23,7 +23,7 @@
         .progress-fill { height:100%; background:#3b82f6; width:0%; transition:width 0.4s ease; }
         .progress-text { font-size:15px; color:#64748b; }
 
-        /* 选项按钮 & 上一题按钮 - 统一样式：默认白色，悬停/点击变蓝 */
+        /* 选项按钮 & 上一题按钮 */
         .option, .nav-btn {
             width:100%; padding:18px 22px; margin:10px 0; border:2px solid #e2e8f0; border-radius:14px;
             background:white; font-size:16.5px; text-align:left; cursor:pointer; transition:all 0.25s;
@@ -35,13 +35,11 @@
         }
         .option strong, .nav-btn strong { color:#3b82f6; font-weight:700; min-width:26px; }
 
-        /* 上一题按钮特殊处理 */
         #back {
             width: auto;
             padding: 12px 24px;
             margin: 0;
             font-size: 16px;
-            text-align: center;
         }
 
         /* 排序题 */
@@ -62,7 +60,7 @@
 
         #chart-container { width:100%; height:460px; margin:30px 0 25px 0; position:relative; }
 
-        /* 最像谁区域 */
+        /* 最像谁区域 - 优化样式，避免重复 */
         #match-section { 
             margin-top:30px; padding:25px; background:#f8fafc; border-radius:16px; 
             text-align:center; border:1px solid #e2e8f0; 
@@ -71,8 +69,20 @@
             width:220px; height:220px; object-fit:cover; border-radius:14px; margin:15px 0; 
             box-shadow:0 6px 20px rgba(0,0,0,0.12); 
         }
+        #match-section .english-quote {
+            font-style: italic;
+            color: #475569;
+            font-size: 15.5px;
+            margin-bottom: 8px;
+        }
+        #match-section .chinese-desc {
+            font-size: 17.5px;
+            font-weight: 700;
+            color: #1e40af;
+            margin-top: 4px;
+        }
 
-        /* 定义区域 - 只显示定义文字 */
+        /* 定义区域 */
         #dimension-list {
             margin-top: 25px;
             padding: 22px;
@@ -94,9 +104,10 @@
         @media (max-width: 768px) {
             body { padding: 12px 8px; }
             .page { padding: 28px 20px; border-radius: 18px; }
+            .question#result-name { font-size: 26px !important; margin-bottom: 12px !important; }
+            #chart-container { height: 390px !important; margin: 15px 0 20px 0 !important; }
             h1 { font-size: 26px !important; }
             .question { font-size: 18.5px !important; }
-            #chart-container { height: 400px !important; }
             .option, .nav-btn { font-size: 16.5px; padding: 17px 18px; }
             .rank-item { padding: 15px 18px; font-size: 16px; }
         }
@@ -111,7 +122,7 @@
         <div style="background:#f1f5f9; padding:20px; border-radius:14px; text-align:left; font-size:15px; line-height:1.6; color:#475569;">
             <strong>友情提示：</strong><br>
             1. 本测试灵感来源于MBTI，以及“恶搞”版SBTI；<br>
-            2. 本网站测试结果仅供娱乐，不具有任何现实指向性，如冒犯肖像权请联系删除；<br>
+            2. 本网站测试结果仅供娱乐，不具有任何现实指向性，人像图片来源于Beatbox Wiki，如有冒犯请联系删除；<br>
             3. 本测试只针对Solo，暂不涉及Loop等其他形式。
         </div>
     </div>
@@ -120,7 +131,7 @@
     </button>
     <div style="margin-top:40px; font-size:13px; color:#64748b; display:flex; justify-content:space-between; align-items:center;">
         <div>开发者：<a href="https://space.bilibili.com/397556405" target="_blank" style="color:#3b82f6;">SherlockedE</a></div>
-        <div>Based on Grok</div>
+        <div>Based on Grok AI</div>
     </div>
 </div>
 
@@ -148,8 +159,13 @@
 
     <div id="match-section"></div>
     
-    <!-- 定义区域 -->
     <div id="dimension-list"></div>
+
+    <!-- 最底部开发者信息 -->
+    <div style="margin-top:40px; font-size:13px; color:#64748b; display:flex; justify-content:space-between; align-items:center;">
+        <div>开发者：<a href="https://space.bilibili.com/397556405" target="_blank" style="color:#3b82f6;">SherlockedE</a></div>
+        <div>Based on Grok AI</div>
+    </div>
 </div>
 
 <script>
@@ -159,12 +175,12 @@ const MAX_SCORES = [19, 29, 33, 24, 29, 33, 25, 33, 36, 41];
 
 const DIM_DESCRIPTIONS = {
     "台风": "舞台张力、现场表现力、侵略性、肢体语言丰富度、入麦强度与气场",
-    "技巧性": "技巧难度、密度、精准控制力、Combo 复杂度、音色干净度",
+    "技巧性": "技巧难度、密度、精准性、控制力、Combo 复杂度、音色干净度",
     "节奏感": "音色力度、拍子稳定性、Flow 切换流畅度、整体律动感",
-    "音乐性": "旋律构建、氛围感、叙事感、情绪感染力、音乐完整度",
+    "音乐性": "旋律性、氛围感、叙事感、情绪感染力、音乐完整度",
     "创新": "原创段子思路、新音色开发、独特风格辨识度、组合创意",
     "编排": "结构完整性、起承转合设计、段落衔接舒适度、整体叙事节奏",
-    "战术": "赛前针对性准备、战术判断、留招 / 开大决策、对战博弈思路",
+    "战术": "赛前针对性准备、战术判断、段子使用决策、对战博弈思路",
     "即兴能力": "反打能力、快速 Copy 能力、现场整活、随机应变能力",
     "心态": "比赛松弛度、抗压能力、情绪稳定、享受舞台的程度",
     "好胜心": "胜负欲、竞技态度、自我要求、求胜动机强度"
@@ -172,108 +188,108 @@ const DIM_DESCRIPTIONS = {
 
 const BBXR_DATA = [
     {name:"Julard", scores:[16,16,19,5,16,8,12,19,19,29], 
-     desc:"<i>\"Watch me destroy the stage\"</i><br>技巧与节奏均衡的全面型选手", 
+     desc:"<i>\"Watch me destroy the stage\"</i><br>古希腊掌管Me louder的神", 
      img:"/images/JulardGBB24.webp"},
 
     {name:"Colaps", scores:[7,22,21,6,16,17,21,11,16,26], 
-     desc:"<i>\"That's what I do!\"</i><br>爆发力极强的战斗型选手", 
+     desc:"<i>\"That's what I do!\"</i><br>吓哭了，Beatbox技巧的天花板", 
      img:"/images/ColapsBBX.webp"},
 
     {name:"Alem", scores:[15,21,25,5,14,14,14,14,7,34], 
-     desc:"<i>\"I am the father of the new school\"</i><br>好胜心与技巧并重的顶级选手", 
+     desc:"<i>\"I am the father of the new school\"</i><br>……tkrprbdbtkrprbdb……啥你说啥？", 
      img:"/images/Alem_GBB_2021.webp"},
 
     {name:"Codfish", scores:[7,13,21,14,13,23,17,9,19,22], 
-     desc:"<i>\"So we are going under...\"</i><br>音乐性与原创性突出", 
+     desc:"<i>\"So we are going under...\"</i><br>一个大鼓就能把你震上天", 
      img:"/images/Codfish_Grand_Beatbox_Battle_2019.webp"},
 
     {name:"Wing", scores:[5,13,21,21,18,29,19,6,14,25], 
-     desc:"<i>\"Dopamine.\"</i><br>编排与音乐性大师", 
+     desc:"<i>\"Dopamine.\"</i><br>什么叫出圈？什么叫顶流？", 
      img:"/images/WINGGBB25.webp"},
 
     {name:"FootboxG", scores:[14,22,23,6,15,15,18,14,15,27], 
-     desc:"<i>\"Cast down\"</i><br>节奏与技巧兼备", 
+     desc:"<i>\"Cast down\"</i><br>破鼓小将，破鼓中将，破鼓老将", 
      img:"/images/FootBoxG25.webp"},
 
     {name:"D-low", scores:[11,18,22,10,24,19,18,12,11,36], 
-     desc:"<i>\"Look at the crowd, boy!\"</i><br>好胜心最强的传奇选手", 
+     desc:"<i>\"Look at the crowd, boy!\"</i><br>请输入文本", 
      img:"/images/Dlow_Grand_Beatbox_Battle_2019.webp"},
 
     {name:"Alexhino", scores:[13,15,21,7,18,11,10,24,22,17], 
-     desc:"<i>\"Follow the tennis ball\"</i><br>即兴能力极强", 
+     desc:"<i>\"Follow the tennis ball\"</i><br>Beatbox史上最骚的男人", 
      img:"/images/AlexinhoGBB2024.webp"},
 
     {name:"NaPoM", scores:[14,10,19,7,15,8,10,24,25,17], 
-     desc:"<i>\"You can't roll like this, like...\"</i><br>心态与即兴高手", 
+     desc:"<i>\"You can't roll like this, like...\"</i><br>Beatbox段子必学榜榜首，", 
      img:"/images/GBB23NaPoM.webp"},
 
     {name:"PACmax", scores:[16,16,18,7,18,11,12,25,21,21], 
-     desc:"<i>\"I'm the Master Bro, I'm the Master of The Flow\"</i><br>台风与心态稳定型选手", 
+     desc:"<i>\"I'm the Master Bro, I'm the Master of The Flow\"</i><br>法国怎么全是整活王？", 
      img:"/images/Pacman.webp"},
 
     {name:"Kenny Urban", scores:[13,13,19,7,12,7,9,29,28,12], 
-     desc:"<i>\"Just Gonna Freestyle It\"</i><br>即兴与心态大师", 
+     desc:"<i>\"Just Gonna Freestyle It\"</i><br>说不出一个段子的名字。。。", 
      img:"/images/Kenny_Urban.webp"},
 
     {name:"Osis", scores:[15,20,20,8,18,14,15,17,14,26], 
-     desc:"<i>\"I want my money in cash...\"</i><br>技巧与节奏均衡", 
+     desc:"<i>\"I want my money in cash...\"</i><br>劫富济贫的爱尔兰现金劫匪向东方热情群众分发财产（）", 
      img:"/images/OsisGBB24.webp"},
 
     {name:"King Inertia", scores:[11,12,22,11,9,20,18,11,18,19], 
-     desc:"<i>\"I'm reckless...\"</i><br>编排与节奏突出", 
+     desc:"<i>\"I'm reckless...\"</i><br>吸Bass把我脑髓都吸出来了", 
      img:"/images/KI.webp"},
 
     {name:"Zekka", scores:[10,11,18,19,17,22,15,10,19,16], 
-     desc:"<i>\"This, is, not, real\"</i><br>音乐性与创新怪才", 
+     desc:"<i>\"This, is, not, real\"</i><br>明年复明年，明年何其多……", 
      img:"/images/Zekka_GBB_2021.webp"},
 
     {name:"Dharni", scores:[10,11,22,16,17,18,9,15,22,18], 
-     desc:"<i>\"I keep it moving till I blow up in the new tunes.\"</i><br>节奏与音乐性大师", 
+     desc:"<i>\"I keep it moving till I blow up in the new tunes.\"</i><br>王宁宁宁宁宁宁宁宁鸟~", 
      img:"/images/DharniGBB24.webp"},
 
     {name:"DEN", scores:[5,12,20,21,13,26,14,13,22,13], 
-     desc:"<i>\"All the moments we had meant nothing...\"</i><br>编排与音乐性突出", 
+     desc:"<i>\"All the moments we had meant nothing...\"</i><br>质疑Me louder，理解Me louder，成为Me louder", 
      img:"/images/GBB23DEN.webp"},
 
     {name:"River", scores:[6,12,18,20,19,28,17,2,11,30], 
-     desc:"<i>\"I need a break, to find my way...\"</i><br>编排与好胜心极强", 
+     desc:"<i>\"I need a break, to find my way...\"</i><br>GBB历史上第一个同时拿下单人和双人的双冠王", 
      img:"/images/River.webp"},
 
     {name:"Gene Shinozaki", scores:[5,11,16,21,13,25,12,13,25,8], 
-     desc:"<i>\"We need a Hero...\"</i><br>音乐性与即兴高手", 
+     desc:"<i>\"We need a Hero...\"</i><br>听哭了，Beatbox音乐性的先驱", 
      img:"/images/GeneShinozaki.webp"},
 
     {name:"Hiss", scores:[8,11,18,20,19,26,11,15,21,17], 
-     desc:"<i>\"Load and fire.\"</i><br>音乐性与编排大师", 
+     desc:"<i>\"Load and fire.\"</i><br>绝对的天才，16岁登上决赛舞台，编排的神，制作的神", 
      img:"/images/HissGBB25.webp"},
 
     {name:"SHOW-GO", scores:[5,10,15,21,13,23,10,11,26,9], 
-     desc:"<i>\"I feel like dying\"</i><br>音乐性与心态突出", 
+     desc:"<i>\"I feel like dying\"</i><br>所有Beatboxer的梦中情男（？）", 
      img:"/images/ShowGo.webp"},
 
     {name:"Skiller", scores:[15,20,23,5,13,12,13,15,11,30], 
-     desc:"<i>\"Beatbox is Magic\"</i><br>节奏与好胜心代表", 
+     desc:"<i>\"Beatbox is Magic\"</i><br>第一个也是唯一一个拿下世锦赛GBB大满贯的人", 
      img:"/images/Skilleer.webp"},
 
     {name:"Zer0", scores:[12,21,23,6,13,14,13,18,18,23], 
-     desc:"<i>\"You better go 100%\"</i><br>技巧与节奏均衡", 
+     desc:"<i>\"You better go 100%\"</i><br>线上杀神，线下……也是杀神", 
      img:"/images/Zero.webp"},
 
     {name:"Kaji", scores:[9,16,17,11,19,19,17,11,11,30], 
-     desc:"<i>\"10 times faster...\"</i><br>创新与好胜心突出", 
+     desc:"<i>\"10 times faster...\"</i><br>嘟嘟嘟嘟嘟嘟嘟嘟", 
      img:"/images/K4JI.webp"},
 
     {name:"Two.H", scores:[6,13,13,7,18,14,13,18,24,12], 
-     desc:"<i>\"Break it down, like this!\"</i><br>创新与心态型选手", 
+     desc:"<i>\"Break it down, like this!\"</i><br>永远走在所有人的前面", 
      img:"/images/Two_H.webp"},
 
     {name:"Trung Bao", scores:[9,16,16,13,17,24,13,11,20,19], 
-     desc:"<i>\"You don't wanna know... what I got to show...\"</i><br>编排与创新突出", 
+     desc:"<i>\"You don't wanna know... what I got to show...\"</i><br>外卡战神，海选……", 
      img:"/images/Trung_Bao_Grand_Beatbox_Battle_2019.webp"},
 
     // 彩蛋
     {name:"东莞阿豪", scores:[0,0,0,0,0,0,0,0,0,0], 
-     desc:"<i>\"Do you love me?\"</i><br>全能摆烂之王，摆烂即是艺术", 
+     desc:"<i>\"Do you love me?\"</i><br>全选一个选项？罚你听阿豪一百遍！", 
      img:"/images/Ahao.jpg", isEasterEgg:true}
 ];
 
@@ -537,7 +553,7 @@ function calcAll() {
 
     displayScores = rawScores.map((score, i) => {
         const max = MAX_SCORES[i] || 30;
-        return max > 0 ? Math.round((score / max) * 50) : 0;
+        return max > 0 ? Math.round((score / max) * 60) : 0;
     });
 }
 
@@ -609,10 +625,19 @@ function renderMatchSection() {
         best = scoredList.sort((a, b) => b.similarity - a.similarity)[0];
     }
 
+    // 修复重复显示：只显示一次中文描述
+    let chineseDesc = best.desc;
+    if (best.desc.includes('<br>')) {
+        chineseDesc = best.desc.split('<br>')[1] || best.desc;
+    } else if (best.desc.includes('</i>')) {
+        chineseDesc = best.desc.replace(/<i>.*?<\/i>/, '').trim();
+    }
+
     container.innerHTML = `
         <h3 style="margin:0 0 15px 0; color:#3b82f6;">你最像 <strong>${best.name}</strong> （${best.similarity}% 相似）</h3>
         <img src="${best.img}" alt="${best.name}">
-        <p style="margin:12px 0 0 0; font-size:15px; color:#475569;">${best.desc}</p>
+        <p class="english-quote">${best.desc.includes('<i>') ? best.desc.match(/<i>(.*?)<\/i>/)[1] : `"${best.desc}"`}</p>
+        <p class="chinese-desc">${chineseDesc}</p>
     `;
 }
 </script>
