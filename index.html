@@ -60,7 +60,7 @@
 
         #chart-container { width:100%; height:460px; margin:30px 0 25px 0; position:relative; }
 
-        /* 最像谁区域 - 优化样式，避免重复 */
+        /* 最像谁区域 */
         #match-section { 
             margin-top:30px; padding:25px; background:#f8fafc; border-radius:16px; 
             text-align:center; border:1px solid #e2e8f0; 
@@ -131,7 +131,7 @@
     </button>
     <div style="margin-top:40px; font-size:13px; color:#64748b; display:flex; justify-content:space-between; align-items:center;">
         <div>开发者：<a href="https://space.bilibili.com/397556405" target="_blank" style="color:#3b82f6;">SherlockedE</a></div>
-        <div>Based on Grok AI</div>
+        <div>Based on Grok</div>
     </div>
 </div>
 
@@ -150,7 +150,7 @@
 
 <div id="page-result" class="page">
     <div style="text-align:center; margin-bottom:10px;">
-        <div class="question" id="result-name" style="font-size:24px;">你的Beatbox能力值分布雷达图</div>
+        <div class="question" id="result-name" style="font-size:24px;">你的Beatbox能力值雷达图</div>
     </div>
     
     <div id="chart-container">
@@ -164,7 +164,7 @@
     <!-- 最底部开发者信息 -->
     <div style="margin-top:40px; font-size:13px; color:#64748b; display:flex; justify-content:space-between; align-items:center;">
         <div>开发者：<a href="https://space.bilibili.com/397556405" target="_blank" style="color:#3b82f6;">SherlockedE</a></div>
-        <div>Based on Grok AI</div>
+        <div>Based on Grok</div>
     </div>
 </div>
 
@@ -175,12 +175,12 @@ const MAX_SCORES = [19, 29, 33, 24, 29, 33, 25, 33, 36, 41];
 
 const DIM_DESCRIPTIONS = {
     "台风": "舞台张力、现场表现力、侵略性、肢体语言丰富度、入麦强度与气场",
-    "技巧性": "技巧难度、密度、精准性、控制力、Combo 复杂度、音色干净度",
+    "技巧性": "技巧难度、密度、精准控制力、Combo 复杂度、音色干净度",
     "节奏感": "音色力度、拍子稳定性、Flow 切换流畅度、整体律动感",
-    "音乐性": "旋律性、氛围感、叙事感、情绪感染力、音乐完整度",
+    "音乐性": "旋律构建、氛围感、叙事感、情绪感染力、音乐完整度",
     "创新": "原创段子思路、新音色开发、独特风格辨识度、组合创意",
     "编排": "结构完整性、起承转合设计、段落衔接舒适度、整体叙事节奏",
-    "战术": "赛前针对性准备、战术判断、段子使用决策、对战博弈思路",
+    "战术": "赛前针对性准备、战术判断、留招 / 开大决策、对战博弈思路",
     "即兴能力": "反打能力、快速 Copy 能力、现场整活、随机应变能力",
     "心态": "比赛松弛度、抗压能力、情绪稳定、享受舞台的程度",
     "好胜心": "胜负欲、竞技态度、自我要求、求胜动机强度"
@@ -600,6 +600,7 @@ function renderDimensionList() {
     container.innerHTML = html;
 }
 
+// 调整相似度算法 - 增大区分度
 function renderMatchSection() {
     const container = document.getElementById('match-section');
     container.innerHTML = '';
@@ -620,12 +621,17 @@ function renderMatchSection() {
                 bMag += bbxr.scores[i] ** 2;
             }
             const cosine = (uMag && bMag) ? dot / (Math.sqrt(uMag) * Math.sqrt(bMag)) : 0;
-            return { ...bbxr, similarity: Math.round(cosine * 100) };
+            
+            // 增强区分度：更强的非线性 + 下拉
+            let similarity = Math.pow(Math.max(cosine, 0.1), 0.62) * 100;
+            similarity = Math.round(Math.max(45, Math.min(96, similarity)));
+            
+            return { ...bbxr, similarity };
         });
         best = scoredList.sort((a, b) => b.similarity - a.similarity)[0];
     }
 
-    // 修复重复显示：只显示一次中文描述
+    // 只显示一次中文描述
     let chineseDesc = best.desc;
     if (best.desc.includes('<br>')) {
         chineseDesc = best.desc.split('<br>')[1] || best.desc;
