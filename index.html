@@ -560,7 +560,7 @@ function calcAll() {
 
     displayScores = rawScores.map((score, i) => {
         const max = MAX_SCORES[i] || 30;
-        return max > 0 ? Math.round((score / max) * 50) : 0;
+        return max > 0 ? Math.round((score / max) * 60) : 0;
     });
 }
 
