@@ -92,6 +92,12 @@
             font-size: 15.2px;
             line-height: 1.75;
         }
+        #dimension-list .notice {
+            font-size: 14px;
+            color: #e11d48;
+            margin-bottom: 18px;
+            font-weight: 500;
+        }
         #dimension-list div {
             margin-bottom: 16px;
         }
@@ -150,7 +156,7 @@
 
 <div id="page-result" class="page">
     <div style="text-align:center; margin-bottom:10px;">
-        <div class="question" id="result-name" style="font-size:24px;">你的Beatbox能力值雷达图</div>
+        <div class="question" id="result-name" style="font-size:24px;">你的Beatbox能力值分布雷达图</div>
     </div>
     
     <div id="chart-container">
@@ -159,6 +165,7 @@
 
     <div id="match-section"></div>
     
+    <!-- 定义区域（带注意提示） -->
     <div id="dimension-list"></div>
 
     <!-- 最底部开发者信息 -->
@@ -174,7 +181,6 @@ const DIM_NAMES = ['台风','技巧性','节奏感','音乐性','创新','编排
 const MAX_SCORES = [19, 29, 33, 24, 29, 33, 25, 33, 36, 41];
 
 const DIM_DESCRIPTIONS = {
-    "注意":"雷达图仅代表你测出来的结果，不是说对应bbxr是这个能力值分布！",
     "台风": "舞台张力、现场表现力、侵略性、肢体语言丰富度、入麦强度与气场",
     "技巧性": "技巧难度、密度、精准控制力、Combo 复杂度、音色干净度",
     "节奏感": "音色力度、拍子稳定性、Flow 切换流畅度、整体律动感",
@@ -291,7 +297,7 @@ const BBXR_DATA = [
     // 彩蛋
     {name:"东莞阿豪", scores:[0,0,0,0,0,0,0,0,0,0], 
      desc:"<i>\"Do you love me?\"</i><br>全选一个选项？罚你听阿豪一百遍！", 
-     img:"/images/Ahao.png", isEasterEgg:true}
+     img:"/images/Ahao.jpg", isEasterEgg:true}
 ];
 
 // ==================== 你的 questions 数组在这里粘贴 ====================
@@ -554,7 +560,7 @@ function calcAll() {
 
     displayScores = rawScores.map((score, i) => {
         const max = MAX_SCORES[i] || 30;
-        return max > 0 ? Math.round((score / max) * 60) : 0;
+        return max > 0 ? Math.round((score / max) * 50) : 0;
     });
 }
 
@@ -591,17 +597,18 @@ function showResult() {
     renderMatchSection();
 }
 
-// 定义只显示文字
+// 定义区域 - 最上方加注意提示
 function renderDimensionList() {
     const container = document.getElementById('dimension-list');
-    let html = '';
+    let html = `
+        <div class="notice">注意：雷达图仅代表你测出来的结果，不是说对应BBxr是这个能力值分布</div>
+    `;
     DIM_NAMES.forEach((dim) => {
         html += `<div><strong>${dim}：</strong>${DIM_DESCRIPTIONS[dim]}</div>`;
     });
     container.innerHTML = html;
 }
 
-// 调整相似度算法 - 增大区分度
 function renderMatchSection() {
     const container = document.getElementById('match-section');
     container.innerHTML = '';
@@ -615,28 +622,18 @@ function renderMatchSection() {
         best.similarity = 100;
     } else {
         const scoredList = BBXR_DATA.map(bbxr => {
-            let diffSum = 0;
+            let dot = 0, uMag = 0, bMag = 0;
             for (let i = 0; i < 10; i++) {
-                // 加权欧氏距离（对好胜心、台风等重要维度加大权重）
-                const weight = (i === 9 || i === 0) ? 1.4 : 1.0;   // 好胜心和台风权重更高
-                diffSum += weight * Math.pow(rawScores[i] - bbxr.scores[i], 2);
+                dot += rawScores[i] * bbxr.scores[i];
+                uMag += rawScores[i] ** 2;
+                bMag += bbxr.scores[i] ** 2;
             }
-            const distance = Math.sqrt(diffSum);
-            
-            // 转为相似度（距离越小越相似）
-            let similarity = Math.max(0, 100 - distance * 1.8);
-            // 非线性增强区分度
-            similarity = Math.pow(similarity / 100, 0.65) * 100;
-            similarity = Math.round(Math.max(40, Math.min(97, similarity)));
-
-            return { ...bbxr, similarity };
+            const cosine = (uMag && bMag) ? dot / (Math.sqrt(uMag) * Math.sqrt(bMag)) : 0;
+            return { ...bbxr, similarity: Math.round(cosine * 100) };
         });
-
-        // 排序取最高
         best = scoredList.sort((a, b) => b.similarity - a.similarity)[0];
     }
 
-    // 只显示一次中文描述
     let chineseDesc = best.desc;
     if (best.desc.includes('<br>')) {
         chineseDesc = best.desc.split('<br>')[1] || best.desc;
