@@ -36,11 +36,6 @@ body { background:#f1f5f9; display:flex; justify-content:center; align-items:cen
 
 #chart-container { width:100%; height:460px; margin:30px 0; position:relative; }
 
-.restart-btn {
-    margin-top:30px; padding:16px; background:#64748b; color:white; border:none; 
-    border-radius:10px; width:100%; cursor:pointer; font-size:16px;
-}
-
 .rank-list { list-style:none; padding:0; }
 .rank-item {
     display:flex; align-items:center; background:#f8fafc; border:2px solid #e2e8f0;
@@ -134,13 +129,6 @@ body { background:#f1f5f9; display:flex; justify-content:center; align-items:cen
     </div>
     
     <div id="match-section"></div>
-    
-    <button class="restart-btn" onclick="restartTest()">重新测试</button>
-
-    <div style="margin-top:40px; font-size:13px; color:#64748b; display:flex; justify-content:space-between; align-items:center;">
-        <div>开发者：<a href="https://space.bilibili.com/397556405" target="_blank" style="color:#3b82f6; text-decoration:none;">SherlockedE</a></div>
-        <div>Based on Grok</div>
-    </div>
 </div>
 
 <script>
@@ -163,34 +151,110 @@ const DIM_DESCRIPTIONS = {
 
 // ==================== BBXR_DATA ====================
 const BBXR_DATA = [
-    {name:"Julard", scores:[16,16,19,5,16,8,12,19,19,29], desc:"技巧与节奏均衡的全面型选手", img:"https://yourdomain.com/images/julard.jpg"},
-    {name:"Colaps", scores:[7,22,21,6,16,17,21,11,16,26], desc:"爆发力极强的战斗型选手", img:"https://yourdomain.com/images/colaps.jpg"},
-    {name:"Alem", scores:[15,21,25,5,14,14,14,14,7,34], desc:"好胜心与技巧并重的顶级选手", img:"https://yourdomain.com/images/alem.jpg"},
-    {name:"Codfish", scores:[7,13,21,14,13,23,17,9,19,22], desc:"音乐性与原创性突出", img:"https://yourdomain.com/images/codfish.jpg"},
-    {name:"Wing", scores:[5,13,21,21,18,29,19,6,14,25], desc:"编排与音乐性大师", img:"https://yourdomain.com/images/wing.jpg"},
-    {name:"FootboxG", scores:[14,22,23,6,15,15,18,14,15,27], desc:"节奏与技巧兼备", img:"https://yourdomain.com/images/footboxg.jpg"},
-    {name:"D-low", scores:[11,18,22,10,24,19,18,12,11,36], desc:"好胜心最强的传奇选手", img:"https://yourdomain.com/images/d-low.jpg"},
-    {name:"Alexhino", scores:[13,15,21,7,18,11,10,24,22,17], desc:"即兴能力极强", img:"https://yourdomain.com/images/alexhino.jpg"},
-    {name:"NaPoM", scores:[14,10,19,7,15,8,10,24,25,17], desc:"心态与即兴高手", img:"https://yourdomain.com/images/napom.jpg"},
-    {name:"PACmax", scores:[16,16,18,7,18,11,12,25,21,21], desc:"台风与心态稳定型选手", img:"https://yourdomain.com/images/pacmax.jpg"},
-    {name:"Kenny Urban", scores:[13,13,19,7,12,7,9,29,28,12], desc:"即兴与心态大师", img:"https://yourdomain.com/images/kennyurban.jpg"},
-    {name:"Osis", scores:[15,20,20,8,18,14,15,17,14,26], desc:"技巧与节奏均衡", img:"https://yourdomain.com/images/osis.jpg"},
-    {name:"King Inertia", scores:[11,12,22,11,9,20,18,11,18,19], desc:"编排与节奏突出", img:"https://yourdomain.com/images/kinginertia.jpg"},
-    {name:"Zekka", scores:[10,11,18,19,17,22,15,10,19,16], desc:"音乐性与创新怪才", img:"https://yourdomain.com/images/zekka.jpg"},
-    {name:"Dharni", scores:[10,11,22,16,17,18,9,15,22,18], desc:"节奏与音乐性大师", img:"https://yourdomain.com/images/dharni.jpg"},
-    {name:"DEN", scores:[5,12,20,21,13,26,14,13,22,13], desc:"编排与音乐性突出", img:"https://yourdomain.com/images/den.jpg"},
-    {name:"River", scores:[6,12,18,20,19,28,17,2,11,30], desc:"编排与好胜心极强", img:"https://yourdomain.com/images/river.jpg"},
-    {name:"Gene Shinozaki", scores:[5,11,16,21,13,25,12,13,25,8], desc:"音乐性与即兴高手", img:"https://yourdomain.com/images/gene.jpg"},
-    {name:"Hiss", scores:[8,11,18,20,19,26,11,15,21,17], desc:"音乐性与编排大师", img:"https://yourdomain.com/images/hiss.jpg"},
-    {name:"SHOW-GO", scores:[5,10,15,21,13,23,10,11,26,9], desc:"音乐性与心态突出", img:"https://yourdomain.com/images/showgo.jpg"},
-    {name:"Skiller", scores:[15,20,23,5,13,12,13,15,11,30], desc:"节奏与好胜心代表", img:"https://yourdomain.com/images/skiller.jpg"},
-    {name:"Zer0", scores:[12,21,23,6,13,14,13,18,18,23], desc:"技巧与节奏均衡", img:"https://yourdomain.com/images/zer0.jpg"},
-    {name:"Kaji", scores:[9,16,17,11,19,19,17,11,11,30], desc:"创新与好胜心突出", img:"https://yourdomain.com/images/kaji.jpg"},
-    {name:"Two.H", scores:[6,13,13,7,18,14,13,18,24,12], desc:"创新与心态型选手", img:"https://yourdomain.com/images/twoh.jpg"},
-    {name:"Trung Bao", scores:[9,16,16,13,17,24,13,11,20,19], desc:"编排与创新突出", img:"https://yourdomain.com/images/trungbao.jpg"},
-    
+    {name:"Julard", scores:[16,16,19,5,16,8,12,19,19,29], 
+     desc:"<i>\"Watch me destroy the stage\"</i><br>技巧与节奏均衡的全面型选手", 
+     img:"/images/JulardGBB24.webp"},
+
+    {name:"Colaps", scores:[7,22,21,6,16,17,21,11,16,26], 
+     desc:"<i>\"That's what I do!\"</i><br>爆发力极强的战斗型选手", 
+     img:"/images/ColapsBBX.webp"},
+
+    {name:"Alem", scores:[15,21,25,5,14,14,14,14,7,34], 
+     desc:"<i>\"I am the father of the new school\"</i><br>好胜心与技巧并重的顶级选手", 
+     img:"/images/Alem_GBB_2021.webp"},
+
+    {name:"Codfish", scores:[7,13,21,14,13,23,17,9,19,22], 
+     desc:"<i>\"So we are going under...\"</i><br>音乐性与原创性突出", 
+     img:"/images/Codfish_Grand_Beatbox_Battle_2019.webp"},
+
+    {name:"Wing", scores:[5,13,21,21,18,29,19,6,14,25], 
+     desc:"<i>\"Dopamine.\"</i><br>编排与音乐性大师", 
+     img:"/images/WINGGBB25.webp"},
+
+    {name:"FootboxG", scores:[14,22,23,6,15,15,18,14,15,27], 
+     desc:"<i>\"Cast down\"</i><br>节奏与技巧兼备", 
+     img:"/images/FootBoxG25.webp"},
+
+    {name:"D-low", scores:[11,18,22,10,24,19,18,12,11,36], 
+     desc:"<i>\"Look at the crowd, boy!\"</i><br>好胜心最强的传奇选手", 
+     img:"/images/Dlow_Grand_Beatbox_Battle_2019.webp"},
+
+    {name:"Alexhino", scores:[13,15,21,7,18,11,10,24,22,17], 
+     desc:"<i>\"Follow the tennis ball\"</i><br>即兴能力极强", 
+     img:"/images/AlexinhoGBB2024.webp"},
+
+    {name:"NaPoM", scores:[14,10,19,7,15,8,10,24,25,17], 
+     desc:"<i>\"You can't roll like this, like...\"</i><br>心态与即兴高手", 
+     img:"/images/GBB23NaPoM.webp"},
+
+    {name:"PACmax", scores:[16,16,18,7,18,11,12,25,21,21], 
+     desc:"<i>\"I'm the Master Bro, I'm the Master of The Flow\"</i><br>台风与心态稳定型选手", 
+     img:"/images/Pacman.webp"},
+
+    {name:"Kenny Urban", scores:[13,13,19,7,12,7,9,29,28,12], 
+     desc:"<i>\"Just Gonna Freestyle It\"</i><br>即兴与心态大师", 
+     img:"/images/Kenny_Urban.webp"},
+
+    {name:"Osis", scores:[15,20,20,8,18,14,15,17,14,26], 
+     desc:"<i>\"I want my money in cash...\"</i><br>技巧与节奏均衡", 
+     img:"/images/OsisGBB24.webp"},
+
+    {name:"King Inertia", scores:[11,12,22,11,9,20,18,11,18,19], 
+     desc:"<i>\"I'm reckless...\"</i><br>编排与节奏突出", 
+     img:"/images/KI.webp"},
+
+    {name:"Zekka", scores:[10,11,18,19,17,22,15,10,19,16], 
+     desc:"<i>\"This, is, not, real\"</i><br>音乐性与创新怪才", 
+     img:"/images/Zekka_GBB_2021.webp"},
+
+    {name:"Dharni", scores:[10,11,22,16,17,18,9,15,22,18], 
+     desc:"<i>\"I keep it moving till I blow up in the new tunes.\"</i><br>节奏与音乐性大师", 
+     img:"/images/DharniGBB24.webp"},
+
+    {name:"DEN", scores:[5,12,20,21,13,26,14,13,22,13], 
+     desc:"<i>\"All the moments we had meant nothing...\"</i><br>编排与音乐性突出", 
+     img:"/images/GBB23DEN.webp"},
+
+    {name:"River", scores:[6,12,18,20,19,28,17,2,11,30], 
+     desc:"<i>\"I need a break, to find my way...\"</i><br>编排与好胜心极强", 
+     img:"/images/River.webp"},
+
+    {name:"Gene Shinozaki", scores:[5,11,16,21,13,25,12,13,25,8], 
+     desc:"<i>\"We need a Hero...\"</i><br>音乐性与即兴高手", 
+     img:"/images/GeneShinozaki.webp"},
+
+    {name:"Hiss", scores:[8,11,18,20,19,26,11,15,21,17], 
+     desc:"<i>\"Load and fire.\"</i><br>音乐性与编排大师", 
+     img:"/images/HissGBB25.webp"},
+
+    {name:"SHOW-GO", scores:[5,10,15,21,13,23,10,11,26,9], 
+     desc:"<i>\"I feel like dying\"</i><br>音乐性与心态突出", 
+     img:"/images/ShowGo.webp"},
+
+    {name:"Skiller", scores:[15,20,23,5,13,12,13,15,11,30], 
+     desc:"<i>\"Beatbox is Magic\"</i><br>节奏与好胜心代表", 
+     img:"/images/Skilleer.webp"},
+
+    {name:"Zer0", scores:[12,21,23,6,13,14,13,18,18,23], 
+     desc:"<i>\"You better go 100%\"</i><br>技巧与节奏均衡", 
+     img:"/images/Zero.webp"},
+
+    {name:"Kaji", scores:[9,16,17,11,19,19,17,11,11,30], 
+     desc:"<i>\"10 times faster...\"</i><br>创新与好胜心突出", 
+     img:"/images/K4JI.webp"},
+
+    {name:"Two.H", scores:[6,13,13,7,18,14,13,18,24,12], 
+     desc:"<i>\"Break it down, like this!\"</i><br>创新与心态型选手", 
+     img:"/images/Two_H.webp"},
+
+    {name:"Trung Bao", scores:[9,16,16,13,17,24,13,11,20,19], 
+     desc:"<i>\"You don't wanna know... what I got to show...\"</i><br>编排与创新突出", 
+     img:"/images/Trung_Bao_Grand_Beatbox_Battle_2019.webp"},
+
     // 彩蛋
-    {name:"东莞阿豪", scores:[0,0,0,0,0,0,0,0,0,0], desc:"全能摆烂之王，摆烂即是艺术", img:"https://yourdomain.com/images/dongaohao.jpg", isEasterEgg:true}
+    {name:"东莞阿豪", scores:[0,0,0,0,0,0,0,0,0,0], 
+     desc:"<i>\"Do you love me?\"</i><br>全能摆烂之王，摆烂即是艺术", 
+     img:"/images/Ahao.jpg", isEasterEgg:true}
 ];
 
 // ==================== 你的 questions 数组在这里粘贴 ====================
@@ -325,6 +389,7 @@ let rawScores = Array(10).fill(0);
 let displayScores = Array(10).fill(0);
 let currentRankOrder = [];
 
+// ==================== 函数 ====================
 function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -456,7 +521,7 @@ function calcAll() {
 
     displayScores = rawScores.map((score, i) => {
         const max = MAX_SCORES[i] || 30;
-        return max > 0 ? Math.round((score / max) * 50) : 0;
+        return max > 0 ? Math.round((score / max) * 60) : 0;
     });
 }
 
@@ -497,40 +562,35 @@ function showResult() {
     renderMatchSection();
 }
 
+// ==================== 只显示一个最像谁 ====================
 function renderMatchSection() {
     const container = document.getElementById('match-section');
     container.innerHTML = '';
 
     const first16 = answers.slice(0, 16);
-    const isEasterEgg = first16.length === 16 && first16.every(a => a !== null && a === first16[0]);
+    const isEasterEgg = first16.length === 16 && 
+                        first16.every(a => a !== null) && 
+                        new Set(first16).size === 1;
 
-    let topBBXRs;
+    let best;
     if (isEasterEgg) {
-        // 彩蛋处理：强制相似度 100%
-        const ahao = BBXR_DATA.find(b => b.name === "东莞阿豪");
-        if (ahao) {
-            topBBXRs = [{ ...ahao, similarity: 100 }];
-        } else {
-            topBBXRs = [{ name: "东莞阿豪", similarity: 100, desc: "全能摆烂之王，摆烂即是艺术", img: "https://yourdomain.com/images/dongaohao.jpg" }];
-        }
+        best = BBXR_DATA.find(b => b.name === "东莞阿豪") || BBXR_DATA[0];
+        best.similarity = 100;
     } else {
-        topBBXRs = BBXR_DATA
-            .map(bbxr => {
-                let dot = 0, uMag = 0, bMag = 0;
-                for (let i = 0; i < 10; i++) {
-                    dot += rawScores[i] * bbxr.scores[i];
-                    uMag += rawScores[i] ** 2;
-                    bMag += bbxr.scores[i] ** 2;
-                }
-                const cosine = (uMag && bMag) ? dot / (Math.sqrt(uMag) * Math.sqrt(bMag)) : 0;
-                const similarity = Math.round(Math.pow(Math.max(cosine, 0), 0.75) * 100);
-                return { ...bbxr, similarity };
-            })
-            .sort((a, b) => b.similarity - a.similarity)
-            .slice(0, 3);
-    }
+        const scoredList = BBXR_DATA.map(bbxr => {
+            let dot = 0, uMag = 0, bMag = 0;
+            for (let i = 0; i < 10; i++) {
+                dot += rawScores[i] * bbxr.scores[i];
+                uMag += rawScores[i] ** 2;
+                bMag += bbxr.scores[i] ** 2;
+            }
+            const cosine = (uMag && bMag) ? dot / (Math.sqrt(uMag) * Math.sqrt(bMag)) : 0;
+            const similarity = Math.round(cosine * 100);
+            return { ...bbxr, similarity };
+        });
 
-    const best = topBBXRs[0];
+        best = scoredList.sort((a, b) => b.similarity - a.similarity)[0];
+    }
 
     let html = `
         <h3 style="margin:0 0 15px 0; color:#3b82f6;">你最像 <strong>${best.name}</strong> （${best.similarity}% 相似）</h3>
@@ -538,22 +598,7 @@ function renderMatchSection() {
         <p style="margin:0 0 20px 0; font-size:15px; color:#475569;">${best.desc}</p>
     `;
 
-    if (!isEasterEgg && topBBXRs.length > 1) {
-        html += `<p style="margin:10px 0 0 0; font-size:14px; color:#64748b;">其次接近：${topBBXRs[1].name}（${topBBXRs[1].similarity}%）`;
-        if (topBBXRs.length > 2) html += `、${topBBXRs[2].name}（${topBBXRs[2].similarity}%）`;
-        html += `</p>`;
-    }
-
     container.innerHTML = html;
-}
-
-function restartTest() {
-    current = 0;
-    answers = Array(questions.length || 17).fill(null);
-    rawScores = Array(10).fill(0);
-    displayScores = Array(10).fill(0);
-    currentRankOrder = [];
-    showPage('page-name');
 }
 </script>
 </body>
